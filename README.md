@@ -1,0 +1,1 @@
+# chesscoin-core-package
