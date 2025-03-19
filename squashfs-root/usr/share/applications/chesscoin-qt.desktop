@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=ChessCoin
+Exec=chesscoin-qt %F
+Icon=${SNAP}/meta/gui/chesscoin-qt.png
+Hidden=false
+GenericName=chesscoin032 wallet
+Comment=GUI application for linux
+Terminal=false
+Categories=Network;Finance;
+StartupWMClass=ChessCoin
+Name[en_US]=chesscoin-qt

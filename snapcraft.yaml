@@ -1,0 +1,78 @@
+name: chesscoin-qt
+version: '1.5.2'
+summary: ChessCoin 0.32% - A desktop wallet for ChessCoin
+description: |
+  ChessCoin 0.32%
+
+website: https://chesscoin032.com
+contact: https://github.com/AKKPP/ChessCoin032-Core-x64/releases # GitHub Issues for user support
+
+
+base: core24
+confinement: strict
+grade: stable
+
+apps:
+  chesscoin-qt:
+    command: usr/bin/chesscoin-qt  # Ensure the correct path
+    desktop: usr/share/applications/chesscoin-qt.desktop
+    plugs:
+      - wayland
+      - desktop
+      - desktop-legacy
+      - home
+      - network
+      - opengl   
+      - removable-media     
+      - x11
+      - gsettings
+
+    environment:
+      XDG_DATA_DIRS: $SNAP/usr/share
+      LD_LIBRARY_PATH: $SNAP/usr/lib:$SNAP/squashfs-root/usr/lib:$LD_LIBRARY_PATH
+
+parts:
+  chesscoin-app:
+    plugin: nil
+    source: .
+    stage-packages:
+      - libegl1
+      - libgl1
+      - libx11-xcb1
+      - libx11-6
+      - libfontconfig1
+      - libharfbuzz0b
+      - libxcb-image0
+
+    override-build: |
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/bin
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/bin/chessengines/chess032engine
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib
+
+      # Copy the application binary
+      cp squashfs-root/usr/bin/chesscoin-qt $SNAPCRAFT_PART_INSTALL/usr/bin/chesscoin-qt
+      chmod +x $SNAPCRAFT_PART_INSTALL/usr/bin/chesscoin-qt
+
+      cp squashfs-root/usr/bin/aichesscoingui $SNAPCRAFT_PART_INSTALL/usr/bin/aichesscoingui
+      chmod +x $SNAPCRAFT_PART_INSTALL/usr/bin/aichesscoingui
+
+      cp squashfs-root/usr/bin/chessengines/chess032engine/chess032engine $SNAPCRAFT_PART_INSTALL/usr/bin/chessengines/chess032engine/chess032engine
+      chmod +x $SNAPCRAFT_PART_INSTALL/usr/bin/chessengines/chess032engine/chess032engine
+
+      # Copy shared libraries
+      cp -r squashfs-root/usr/lib/* $SNAPCRAFT_PART_INSTALL/usr/lib/
+
+      # Copy the desktop entry
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/applications
+      cp squashfs-root/usr/share/applications/chesscoin-qt.desktop $SNAPCRAFT_PART_INSTALL/usr/share/applications/chesscoin-qt.desktop
+
+      # Copy the icon
+      mkdir -p $SNAPCRAFT_PART_INSTALL/meta/gui
+      cp squashfs-root/usr/share/icons/hicolor/256x256/apps/chesscoin-qt.png $SNAPCRAFT_PART_INSTALL/meta/gui/chesscoin-qt.png
+      
+    organize:
+      'squashfs-root/usr/bin/*': usr/bin/
+      'squashfs-root/usr/share/applications/chesscoin-qt.desktop': usr/share/applications/chesscoin-qt.desktop
+      'squashfs-root/usr/share/icons/hicolor/*': usr/share/icons/hicolor/
+      'squashfs-root/AppRun': AppRun
+      'squashfs-root/chesscoin-qt.png': chesscoin-qt.png
